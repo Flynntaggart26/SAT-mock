@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SAT Mock Exams — Practice Hub</title>
+  <style>
+    :root {
+      --bg: #0f172a;
+      --card-bg: #1e293b;
+      --text: #f8fafc;
+      --text-muted: #94a3b8;
+      --primary: #38bdf8;
+      --primary-hover: #0284c7;
+      --accent: #6366f1;
+      --border: #334155;
+      --success: #22c55e;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; }
+    body {
+      background-color: var(--bg);
+      color: var(--text);
+      padding: 40px 20px;
+      min-height: 100vh;
+      line-height: 1.6;
+    }
+    .container { max-width: 900px; margin: 0 auto; }
+    header {
+      text-align: center;
+      margin-bottom: 48px;
+      padding-bottom: 24px;
+      border-bottom: 2px solid var(--border);
+    }
+    h1 {
+      font-size: 2.5rem;
+      color: #fff;
+      margin-bottom: 12px;
+      font-weight: 800;
+      letter-spacing: -1px;
+    }
+    .subtitle {
+      color: var(--text-muted);
+      font-size: 1.1rem;
+    }
+    .mock-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+      gap: 24px;
+      margin-bottom: 48px;
+    }
+    .mock-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 32px 28px;
+      transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+      text-decoration: none;
+      color: inherit;
+      display: block;
+    }
+    .mock-card:hover {
+      transform: translateY(-4px);
+      border-color: var(--primary);
+      box-shadow: 0 12px 24px rgba(0, 0, 0, 0.3);
+    }
+    .mock-card .tag {
+      display: inline-block;
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      padding: 4px 10px;
+      border-radius: 6px;
+      margin-bottom: 14px;
+      background: #334155;
+      color: var(--primary);
+    }
+    .mock-card h2 {
+      font-size: 1.4rem;
+      margin-bottom: 10px;
+      color: #fff;
+    }
+    .mock-card p {
+      color: var(--text-muted);
+      font-size: 0.95rem;
+      margin-bottom: 20px;
+    }
+    .mock-meta {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      margin-top: auto;
+    }
+    .mock-meta span { display: flex; align-items: center; gap: 6px; }
+    .arrow {
+      display: inline-block;
+      margin-left: 6px;
+      font-weight: 800;
+      color: var(--primary);
+      transition: transform 0.2s ease;
+    }
+    .mock-card:hover .arrow { transform: translateX(4px); }
+    .empty-state {
+      text-align: center;
+      padding: 80px 20px;
+      color: var(--text-muted);
+    }
+    .empty-state h2 { color: #fff; margin-bottom: 12px; }
+    .footer {
+      text-align: center;
+      color: var(--text-muted);
+      font-size: 0.85rem;
+      margin-top: 48px;
+      padding-top: 24px;
+      border-top: 1px solid var(--border);
+    }
+    .add-hint {
+      margin-top: 16px;
+      font-size: 0.9rem;
+      color: var(--text-muted);
+    }
+    .add-hint code {
+      background: #334155;
+      color: var(--primary);
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-size: 0.85rem;
+    }
+    @media (max-width: 640px) {
+      body { padding: 20px 16px; }
+      .mock-grid { grid-template-columns: 1fr; }
+      h1 { font-size: 1.8rem; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>SAT Mock Exams</h1>
+      <div class="subtitle">Digital SAT Practice &bull; Reading, Writing &amp; Math</div>
+    </header>
+
+    <div class="mock-grid">
+      <!-- Mock 1 -->
+      <a href="mock1.html" class="mock-card">
+        <span class="tag">Mock 1 &bull; Available</span>
+        <h2>SAT Mock Exam #1</h2>
+        <p>Hardest-level Reading &amp; Writing (15 questions) and Math (22 questions) with full answer key, explanations, timed sections, and print support.</p>
+        <div class="mock-meta">
+          <span><strong>37 Questions</strong></span>
+          <span><strong>~99 min</strong></span>
+        </div>
+        <span class="arrow">&rarr;</span>
+      </a>
+
+      <!-- Future mocks can be added here by duplicating the block above -->
+      <!-- Example:
+      <a href="mock2.html" class="mock-card">
+        <span class="tag">Mock 2 &bull; Coming Soon</span>
+        <h2>SAT Mock Exam #2</h2>
+        <p>...</p>
+        <div class="mock-meta"><span><strong>-- Questions</strong></span><span><strong>-- min</strong></span></div>
+        <span class="arrow">&rarr;</span>
+      </a>
+      -->
+    </div>
+
+    <div class="add-hint">
+      To add a new mock: create <code>mock2.html</code>, <code>mock3.html</code>, etc. in this folder, then add a new <code>&lt;a&gt;</code> card above linking to it.
+    </div>
+
+    <div class="footer">
+      &copy; 2026 SAT Mock Exams &bull; Built for Digital SAT practice
+    </div>
+  </div>
+</body>
+</html>
