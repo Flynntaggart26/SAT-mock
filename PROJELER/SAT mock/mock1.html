@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SAT Mock Exam — Hardest Reading, Writing & Math</title>
+  <style>
+    :root { --bg:#0f172a; --card-bg:#1e293b; --text:#f8fafc; --text-muted:#94a3b8; --primary:#38bdf8; --primary-hover:#0284c7; --success:#22c55e; --danger:#ef4444; --warning:#f59e0b; --border:#334155; --accent:#6366f1; }
+    * { box-sizing:border-box; margin:0; padding:0; font-family:'Segoe UI',Roboto,Helvetica,Arial,sans-serif; }
+    body { background-color:var(--bg); color:var(--text); padding:20px; min-height:100vh; line-height:1.6; }
+    .container { max-width:1000px; margin:0 auto; }
+    header { text-align:center; margin-bottom:30px; padding-bottom:20px; border-bottom:2px solid var(--border); }
+    h1 { font-size:2rem; color:#fff; margin-bottom:8px; font-weight:800; letter-spacing:-0.5px; }
+    .subtitle { color:var(--text-muted); font-size:1rem; }
+    .start-screen,.results-screen,.answer-key-screen { display:none; text-align:center; padding:40px 20px; }
+    .start-screen.active,.results-screen.active,.answer-key-screen.active { display:block; }
+    .exam-info { background:var(--card-bg); border:1px solid var(--border); border-radius:12px; padding:30px; margin-bottom:30px; text-align:left; }
+    .exam-info h2 { color:var(--primary); margin-bottom:15px; font-size:1.3rem; }
+    .exam-info ul { margin-left:20px; color:var(--text-muted); }
+    .exam-info li { margin-bottom:8px; }
+    .btn-start { background:var(--primary); color:#000; border:none; padding:14px 32px; font-size:1.1rem; font-weight:700; border-radius:8px; cursor:pointer; transition:background 0.2s; }
+    .btn-start:hover { background:var(--primary-hover); }
+    .exam-container { display:none; }
+    .exam-container.active { display:block; }
+    .timer-bar { background:var(--card-bg); border:1px solid var(--border); border-radius:10px; padding:12px 20px; margin-bottom:24px; display:flex; justify-content:space-between; align-items:center; font-weight:700; font-size:1.1rem; }
+    .timer-warning { color:var(--danger); animation:blink 1s infinite; }
+    @keyframes blink { 50% { opacity:0.5; } }
+    .section-header { background:var(--card-bg); border:1px solid var(--border); border-radius:10px; padding:16px 20px; margin-bottom:24px; display:flex; justify-content:space-between; align-items:center; }
+    .section-title { font-size:1.2rem; font-weight:700; color:var(--primary); }
+    .section-sub { font-size:0.9rem; color:var(--text-muted); }
+    .q-card { background:var(--card-bg); border:1px solid var(--border); border-radius:12px; padding:22px; margin-bottom:22px; }
+    .q-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:14px; }
+    .q-meta { display:flex; align-items:center; gap:10px; }
+    .q-num { font-size:0.85rem; font-weight:700; padding:4px 10px; border-radius:6px; background:var(--accent); color:#fff; }
+    .q-badge { font-size:0.75rem; font-weight:700; padding:4px 8px; border-radius:6px; background:var(--border); color:var(--text-muted); text-transform:uppercase; }
+    .q-topic { font-size:0.75rem; color:var(--text-muted); }
+    .q-body { font-size:1rem; margin-bottom:16px; color:var(--text); }
+    .q-body p { margin-bottom:10px; }
+    .q-body .passage { background:#0f172a; border-left:4px solid var(--accent); padding:14px 18px; margin:12px 0; font-style:italic; color:var(--text-muted); border-radius:0 8px 8px 0; }
+    .q-body .passage p { margin:0 0 8px 0; }
+    .q-body .passage p:last-child { margin-bottom:0; }
+    .choices { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+    .choice-btn { display:flex; align-items:center; gap:10px; background:#0f172a; border:2px solid var(--border); color:var(--text); padding:12px 16px; border-radius:8px; cursor:pointer; font-size:0.95rem; transition:all 0.2s; }
+    .choice-btn:hover { border-color:var(--primary); background:#1e293b; }
+    .choice-btn.selected { border-color:var(--primary); background:#1e4ed8; color:#fff; }
+    .choice-btn.correct { border-color:var(--success); background:#064e3b; color:#fff; }
+    .choice-btn.incorrect { border-color:var(--danger); background:#7f1d1d; color:#fff; }
+    .choice-letter { font-weight:800; width:24px; text-align:center; }
+    input[type="radio"] { appearance:none; width:18px; height:18px; border:2px solid var(--border); border-radius:4px; cursor:pointer; }
+    input[type="radio"]:checked { border-color:var(--primary); background:var(--primary); }
+    .math-input-row { display:flex; gap:10px; align-items:center; margin-top:10px; }
+    .ans-input { flex:1; background:#0f172a; border:2px solid var(--border); color:var(--text); padding:12px 14px; border-radius:8px; font-size:1rem; }
+    .ans-input:focus { outline:none; border-color:var(--primary); }
+    .btn-check { background:var(--primary); color:#000; border:none; padding:12px 20px; font-weight:700; border-radius:8px; cursor:pointer; }
+    .btn-check:hover { background:var(--primary-hover); }
+    .feedback { margin-top:12px; padding:12px; border-radius:8px; font-size:0.9rem; display:none; }
+    .feedback.correct { display:block; background:#064e3b; color:#bbf7d0; border:1px solid var(--success); }
+    .feedback.incorrect { display:block; background:#7f1d1d; color:#fecaca; border:1px solid var(--danger); }
+    .explanation { margin-top:12px; padding:14px 16px; background:#0f172a; border:1px solid var(--border); border-radius:8px; display:none; }
+    .explanation.visible { display:block; }
+    .explanation strong { color:var(--primary); }
+    .explanation p { margin-top:6px; color:var(--text-muted); font-size:0.9rem; }
+    .controls { display:flex; justify-content:space-between; align-items:center; margin-top:30px; padding-top:20px; border-top:1px solid var(--border); }
+    .nav-btn { background:var(--card-bg); border:1px solid var(--border); color:var(--text); padding:10px 20px; border-radius:8px; cursor:pointer; font-size:0.95rem; }
+    .nav-btn:hover { background:#334155; }
+    .nav-btn:disabled { opacity:0.5; cursor:not-allowed; }
+    .progress { display:flex; gap:6px; margin-bottom:20px; }
+    .progress-dot { width:10px; height:10px; border-radius:50%; background:var(--border); }
+    .progress-dot.answered { background:var(--success); }
+    .progress-dot.current { background:var(--primary); transform:scale(1.3); }
+    .progress-dot.revealed { background:var(--warning); }
+    .results-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:16px; margin:30px 0; }
+    .result-card { background:var(--card-bg); border:1px solid var(--border); border-radius:12px; padding:20px; text-align:center; }
+    .result-card .val { font-size:2rem; font-weight:800; color:var(--primary); }
+    .result-card .lbl { font-size:0.85rem; color:var(--text-muted); margin-top:6px; }
+    .score-breakdown { margin-top:30px; text-align:left; }
+    .score-breakdown h3 { color:var(--primary); margin-bottom:15px; }
+    .breakdown-row { display:flex; justify-content:space-between; padding:10px 0; border-bottom:1px solid var(--border); }
+    .answer-key-screen h2 { color:var(--primary); margin-bottom:20px; text-align:center; }
+    .key-section { margin-bottom:30px; }
+    .key-section h3 { color:var(--text); margin-bottom:15px; font-size:1.1rem; border-bottom:1px solid var(--border); padding-bottom:8px; }
+    .key-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(220px,1fr)); gap:12px; }
+    .key-item { background:var(--card-bg); border:1px solid var(--border); border-radius:8px; padding:12px; font-size:0.85rem; }
+    .key-item .qid { font-weight:700; color:var(--primary); }
+    .key-item .ans { color:var(--success); font-weight:700; float:right; }
+    @media (max-width:640px) { .choices { grid-template-columns:1fr; } body { padding:12px; } }
+    @media print {
+      body { background:#fff !important; color:#000 !important; padding:0; }
+      .container { max-width:100% !important; }
+      .start-screen,.results-screen,.answer-key-screen { display:block !important; }
+      .exam-container { display:none !important; }
+      .timer-bar,.section-header,.controls,.progress,.nav-btn,.btn-check,.feedback,.btn-start { display:none !important; }
+      .q-card { background:#fff !important; border:1px solid #000 !important; border-radius:0 !important; page-break-inside:avoid; }
+      .q-body { color:#000 !important; }
+      .q-body .passage { background:#f5f5f5 !important; color:#000 !important; border-left:4px solid #333 !important; }
+      .choice-btn { background:#fff !important; border:1px solid #000 !important; color:#000 !important; }
+      .choice-btn.selected { background:#e0e0e0 !important; }
+      .choice-btn.correct { background:#d4edda !important; border-color:#28a745 !important; }
+      .choice-btn.incorrect { background:#f8d7da !important; border-color:#dc3545 !important; }
+      .ans-input { background:#fff !important; border:1px solid #000 !important; color:#000 !important; }
+      .explanation { background:#f8f9fa !important; border:1px solid #000 !important; color:#000 !important; }
+      .feedback { border:1px solid #000 !important; }
+      .feedback.correct { background:#d4edda !important; color:#000 !important; }
+      .feedback.incorrect { background:#f8d7da !important; color:#000 !important; }
+      .result-card { background:#fff !important; border:1px solid #000 !important; color:#000 !important; }
+      .result-card .val { color:#000 !important; }
+      .key-item { background:#fff !important; border:1px solid #000 !important; color:#000 !important; }
+      .key-item .qid { color:#000 !important; }
+      .key-item .ans { color:#000 !important; }
+      h1,h2,h3 { color:#000 !important; }
+      .subtitle,.text-muted,.section-sub { color:#333 !important; }
+      a { color:#000 !important; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="start-screen active" id="start-screen">
+      <header><h1>SAT Mock Exam</h1><div class="subtitle">Digital SAT Format &bull; Hardest-Level Questions &bull; Reading, Writing &amp; Math</div></header>
+      <div class="exam-info"><h2>Exam Structure</h2><ul><li><strong>Reading and Writing:</strong> 15 hardest questions</li><li><strong>Math:</strong> 22 hardest questions (calculator allowed)</li><li><strong>Total time:</strong> 99 minutes (R&amp;W: 32 min, Math: 35 min per module)</li><li><strong>Question types:</strong> Multiple-choice (A–D) and student-produced responses</li><li><strong>Answer key:</strong> Full answer key with explanations at the end</li></ul></div>
+      <button class="btn-start" onclick="startExam()">Start Mock Exam</button>
+    </div>
+
+    <div class="exam-container" id="exam-container">
+      <header style="margin-bottom:16px;"><h1 style="text-align:left;">SAT Mock Exam</h1><div class="subtitle" style="text-align:left;">Section <span id="section-label">1</span> of 2 &bull; Question <span id="q-counter">1</span> of <span id="q-total">0</span></div></header>
+      <div class="timer-bar"><span id="timer-display">32:00</span><span id="timer-label">Time Remaining</span></div>
+      <div class="progress" id="progress-dots"></div>
+      <div class="section-header"><div><div class="section-title" id="section-title">Reading and Writing</div><div class="section-sub" id="section-sub">Hardest-Level Module</div></div><div id="section-timer"></div></div>
+      <div id="question-area"></div>
+      <div class="controls"><button class="nav-btn" id="btn-prev" onclick="prevQuestion()" disabled>Previous</button><button class="nav-btn" id="btn-next" onclick="nextQuestion()">Next</button><button class="nav-btn" id="btn-finish" onclick="finishExam()" style="background:var(--warning);color:#000;font-weight:700;">Finish Exam</button></div>
+    </div>
+
+    <div class="results-screen" id="results-screen">
+      <header><h1>Exam Complete</h1><div class="subtitle">Your SAT Mock Exam Results</div></header>
+      <div class="results-grid"><div class="result-card"><div class="val" id="score-total">--</div><div class="lbl">Total Score (400–1600)</div></div><div class="result-card"><div class="val" id="score-rw">--</div><div class="lbl">Reading &amp; Writing (200–800)</div></div><div class="result-card"><div class="val" id="score-math">--</div><div class="lbl">Math (200–800)</div></div><div class="result-card"><div class="val" id="score-pct">--</div><div class="lbl">Percentile (Estimated)</div></div></div>
+      <div class="score-breakdown"><h3>Section Breakdown</h3><div class="breakdown-row"><span>Reading &amp; Writing Correct</span><span id="br-rw-correct">--</span></div><div class="breakdown-row"><span>Reading &amp; Writing Total</span><span id="br-rw-total">--</span></div><div class="breakdown-row"><span>Math Correct</span><span id="br-math-correct">--</span></div><div class="breakdown-row"><span>Math Total</span><span id="br-math-total">--</span></div></div>
+      <div class="controls" style="justify-content:center;"><button class="btn-nav btn-review" onclick="showAnswerKey()">Review Answer Key</button><button class="btn-nav" onclick="location.reload()">Retake Exam</button></div>
+    </div>
+
+    <div class="answer-key-screen" id="answer-key-screen">
+      <header><h1>Answer Key &amp; Explanations</h1><div class="subtitle">Review every question with detailed explanations</div></header>
+      <div class="key-section"><h3>Reading and Writing</h3><div class="key-grid" id="key-rw"></div></div>
+      <div class="key-section"><h3>Math</h3><div class="key-grid" id="key-math"></div></div>
+      <div class="controls" style="justify-content:center;"><button class="btn-nav" onclick="showResults()">Back to Results</button><button class="btn-nav btn-print" onclick="window.print()">Print Answer Key</button></div>
+    </div>
+  </div>
+  <script>
+    const rwQuestions = [
+      { id:1, section:"rw", passage:["The prevailing narrative about early industrialization often portrays technological innovation as the inevitable engine of economic progress, with inventors and entrepreneurs cast as heroic figures who single-handedly transformed agrarian societies into industrial powerhouses. This interpretation, however, obscures the more complicated reality that industrialization was as much a product of institutional arrangements and social coercion as it was of mechanical ingenuity.","Enclosure acts in England, for instance, did not merely reorganize land use; they displaced rural populations, creating a landless workforce with little choice but to seek factory employment. Similarly, the expansion of colonial trade networks provided raw materials and captive markets, meaning that industrial growth depended heavily on geopolitical domination rather than purely on the superiority of new machinery. To treat industrialization as a story of autonomous technological advance is therefore to mistake a contingent historical process for a deterministic one."], question:"Which choice best describes the overall structure of the passage?", choices:["It chronicles the development of specific inventions and identifies the inventors responsible for them.","It challenges a common interpretation of industrialization by presenting alternative causal factors.","It compares the economic conditions of agrarian societies with those of industrial powerhouses.","It argues that enclosure acts were more significant than colonial trade in driving industrial growth."], answer:"B", explanation:"The passage begins by introducing the 'prevailing narrative' that casts technological innovation as the engine of progress. It then pivots with 'This interpretation, however,' to argue that institutional arrangements, social coercion, enclosure acts, and colonial trade were equally or more important. Thus, the structure is a challenge to a common interpretation by presenting alternative causal factors. (A) is wrong because no specific inventions or inventors are chronicled. (C) is wrong because no direct comparison of economic conditions is made. (D) is wrong because the passage treats enclosure acts and colonial trade as complementary factors, not ranks them against each other."},
+      { id:2, section:"rw", passage:["Some linguists argue that the language a person speaks shapes the way that person perceives reality—a hypothesis known as linguistic relativity. According to this view, speakers of different languages may attend to different aspects of experience because their languages make certain distinctions obligatory. For example, if a language requires speakers to specify the direction of motion (north, south, east, west) rather than using relative terms (left, right), its speakers may develop a heightened awareness of cardinal directions."], question:"The underlined portion of the passage below serves primarily to:", choices:["provide an example illustrating how language might influence perception.","refute the claim that linguistic relativity has any measurable effect.","establish that all languages encode spatial information in the same way.","demonstrate that cardinal directions are more important than relative directions."], answer:"A", explanation:"The underlined sentence gives a concrete illustration (directional language vs. relative terms) of how obligatory linguistic distinctions may lead speakers to attend to different aspects of experience. This supports the hypothesis of linguistic relativity. (B) is wrong because the passage supports, not refutes, the hypothesis. (C) is wrong because it claims the opposite of what the example shows. (D) is wrong because the passage does not claim one system is more important than the other."},
+      { id:3, section:"rw", passage:["Recent archaeological findings suggest that the collapse of the Late Bronze Age civilizations around 1200 BCE was not caused by a single cataclysmic event but by a 'systems collapse'—a cascading failure in which earthquakes, drought, rebellions, and invasions reinforced one another. Interdependent trade networks meant that a shock in one region rapidly propagated across the Mediterranean and Near East, overwhelming the capacity of centralized states to respond."], question:"Which choice best states the main idea of the passage?", choices:["A single earthquake destroyed the major cities of the Late Bronze Age.","The collapse resulted from multiple interacting stressors rather than one cause.","Trade networks were the sole reason civilizations survived the crisis.","Centralized states successfully managed all environmental and political shocks."], answer:"B", explanation:"The passage explicitly rejects a 'single cataclysmic event' and describes a 'systems collapse' in which multiple factors (earthquakes, drought, rebellions, invasions) reinforced one another. (A) contradicts the text. (C) is wrong because trade networks propagated shocks, they did not solely ensure survival. (D) is wrong because centralized states were overwhelmed, not successful."}
+      { id:4, section:"rw", passage:["The poet’s use of enjambment—carrying a sentence across a line break without punctuation—creates a sense of forward momentum that mirrors the speaker’s restless psychological state. By refusing to let the reader pause at conventional points, the poem enacts the very anxiety it describes."], question:"The author uses the phrase 'enacts the very anxiety it describes' primarily to suggest that:", choices:["the poem’s formal structure reflects its thematic content.","the speaker is unable to articulate feelings of anxiety.","punctuation is unnecessary in modern poetry.","readers should read the poem quickly to feel anxious."], answer:"A", explanation:"The phrase connects the poem’s formal device (enjambment and forward momentum) with its theme (restlessness and anxiety), suggesting that structure and content mirror each other. (B) is unsupported; the speaker articulates anxiety clearly. (C) and (D) are not supported by the passage."},
+      { id:5, section:"rw", passage:["Economists have long debated whether raising the minimum wage reduces employment. Traditional models predict that higher labor costs lead employers to hire fewer workers. However, recent empirical studies comparing neighboring states with different minimum wages have found little to no effect on employment levels, suggesting that the relationship between wages and employment is more complex than the traditional model assumes."], question:"Which choice best describes the function of the underlined sentence in the passage as a whole?", choices:["It introduces the traditional economic model that the passage subsequently challenges.","It provides empirical evidence that supports the traditional model’s prediction.","It summarizes the consensus view among all economists on minimum wage policy.","It proposes a new mathematical formula for calculating employment levels."], answer:"A", explanation:"The underlined sentence states the 'traditional models predict...' position, which the next sentence challenges with recent empirical studies. Thus, it introduces the model that the passage goes on to question. (B) is wrong because the evidence challenges, not supports, the model. (C) is wrong because the passage describes a debate, not consensus. (D) is wrong because no formula is proposed."},
+      { id:6, section:"rw", passage:["In many species of birds, plumage coloration serves as an honest signal of individual quality because producing bright pigments is metabolically costly. Only individuals in good health can afford the energetic expense of vibrant feathers, so potential mates use coloration as a reliable indicator of fitness."], question:"The author’s claim that plumage coloration is an 'honest signal' depends on which of the following assumptions?", choices:["All bird species use the same pigments for coloration.","Producing bright pigments is equally costly for all individuals.","Individuals in poor health cannot produce vibrant feathers.","Potential mates are unable to perceive subtle differences in color."], answer:"C", explanation:"The argument states that only individuals in good health can afford bright feathers, making coloration a reliable indicator. This depends on the assumption that unhealthy individuals cannot produce such feathers. (A) is irrelevant. (B) is wrong because if it were equally costly, it would not reliably signal individual differences in quality. (D) contradicts the premise that mates use coloration as an indicator."},
+      { id:7, section:"rw", passage:["The philosopher argues that moral responsibility requires the capacity to have done otherwise. If a person’s actions are fully determined by prior causes beyond their control, then they could not have acted differently, and thus cannot be held morally responsible. This position, known as hard determinism, challenges ordinary practices of praise and blame."], question:"Which choice best summarizes the argument presented in the passage?", choices:["Moral responsibility is compatible with determinism because people still make choices.","If determinism is true, moral responsibility is impossible because alternatives are unavailable.","Praise and blame are irrelevant to whether actions are determined.","Prior causes enhance, rather than diminish, a person’s moral responsibility."], answer:"B", explanation:"The passage states that moral responsibility requires the capacity to have done otherwise, and that determinism removes that capacity, making moral responsibility impossible. This is exactly choice (B). (A) describes compatibilism, the opposite view. (C) is wrong because praise and blame are central to the discussion. (D) contradicts the passage."},
+      { id:8, section:"rw", passage:["Urban planners advocating for '15-minute cities' propose that all essential services—groceries, healthcare, education, and recreation—should be within a short walk or bike ride from every residence. Critics counter that such planning may restrict mobility and impose a single vision of urban life on diverse populations with differing needs and preferences."], question:"The passage most strongly suggests that critics of 15-minute cities are concerned about:", choices:["the environmental cost of walking and biking.","the potential loss of individual freedom and diversity of urban life.","the high cost of building grocery stores and schools.","the difficulty of accessing healthcare in rural areas."], answer:"B", explanation:"The critics’ concern is explicitly about restricting mobility and imposing a single vision on diverse populations—i.e., loss of freedom and diversity. (A), (C), and (D) are not mentioned."}
+      { id:9, section:"rw", passage:["The novel’s narrator repeatedly describes the house as 'breathing,' 'watching,' and 'remembering.' These attributions of consciousness to an inanimate object suggest that the setting is not merely a backdrop but an active, possibly sentient, participant in the story’s events."], question:"The author’s use of the words 'breathing,' 'watching,' and 'remembering' primarily serves to:", choices:["establish that the house is structurally sound and well-maintained.","imply that the house possesses agency or consciousness.","provide a literal architectural history of the building.","indicate that the narrator suffers from poor eyesight."], answer:"B", explanation:"These are verbs of consciousness applied to a house, implying agency or sentience. (A), (C), and (D) are unrelated to the literary device described."},
+      { id:10, section:"rw", passage:["Some economists argue that universal basic income (UBI) would reduce poverty by providing a stable financial floor. Others contend that UBI would discourage work and strain public finances. The actual effect likely depends on the design of the program—its funding mechanism, benefit level, and interaction with existing welfare systems."], question:"Which choice best states the author’s position on universal basic income?", choices:["UBI will certainly reduce poverty and should be implemented immediately.","UBI will certainly discourage work and should be rejected.","The impact of UBI cannot be determined without knowing the specifics of its design.","UBI has no effect on public finances."], answer:"C", explanation:"The author presents opposing views and concludes that the effect depends on program design details. This matches (C). (A) and (B) are too one-sided. (D) contradicts the mention of straining public finances."},
+      { id:11, section:"rw", passage:["In controlled experiments, participants who were reminded of money—by viewing images of cash or being near a Monopoly set—became less likely to help others and more likely to prefer working alone. Researchers suggest that money activates a mindset of self-sufficiency, reducing communal orientation even when the money is merely symbolic."], question:"Which choice best describes the evidence presented in the passage?", choices:["Anecdotal stories about wealthy individuals who refuse to help others.","Experimental results showing money reminders reduce helping behavior.","A historical analysis of economies that abandoned currency.","A survey asking people whether they think money changes personality."], answer:"B", explanation:"The passage describes controlled experiments with money reminders and measured effects on helping behavior. (A), (C), and (D) describe methods not used in the passage."}
+      { id:12, section:"rw", passage:["The biologist’s theory of punctuated equilibrium proposes that evolutionary change occurs in rapid bursts followed by long periods of stability, rather than through gradual, continuous transformation. This model helps explain why the fossil record often shows species appearing suddenly and persisting unchanged for millions of years."], question:"According to the passage, punctuated equilibrium helps explain:", choices:["why species evolve at a constant, gradual rate over time.","why fossils show species appearing suddenly and remaining unchanged for long periods.","why the fossil record is completely absent for most of Earth’s history.","why all evolutionary change happens within a single generation."], answer:"B", explanation:"The last sentence directly states that the model explains sudden appearances and long periods of unchanged persistence in the fossil record. (A) contradicts 'rather than gradual.' (C) and (D) are exaggerations not supported."},
+      { id:13, section:"rw", passage:["Although the new policy was intended to increase transparency, its complex reporting requirements have instead created additional bureaucratic layers. Officials now spend more time completing forms than analyzing data, suggesting that the policy may have produced the opposite of its intended effect."], question:"Which choice best states the main claim of the passage?", choices:["The new policy successfully increased transparency in government.","Complex reporting requirements always improve data analysis.","The new policy may have reduced transparency by increasing bureaucracy.","Officials should spend less time analyzing data and more time on paperwork."], answer:"C", explanation:"The passage says the policy intended transparency but created bureaucracy, with officials spending more time on forms than analysis—suggesting the opposite effect. (C) captures this. (A) contradicts. (B) is too absolute and unsupported. (D) is the opposite of the passage’s implication."},
+      { id:14, section:"rw", passage:["The author concedes that the new technology has reduced production costs significantly. However, she argues that these savings have not been passed on to consumers in the form of lower prices, but have instead been retained as higher corporate profits."], question:"The author’s argument is most vulnerable to the objection that:", choices:["production costs are irrelevant to consumer prices.","the technology may not have actually reduced costs.","corporate profits could have been reinvested rather than simply retained.","consumers do not care about the price of goods."], answer:"C", explanation:"The author assumes retained savings equal higher profits. If those savings were reinvested (e.g., in R&D, wages, expansion), the conclusion that they were simply 'retained as profits' would be weakened. (A) is too extreme. (B) contradicts the concession. (D) is irrelevant."},
+      { id:15, section:"rw", passage:["The painting’s composition draws the viewer’s eye first to the brightly lit figure in the center, then outward to the shadowed figures at the edges. This visual hierarchy suggests that the central figure is the protagonist of the scene, while the peripheral figures serve a supporting or contrasting role."], question:"Which choice best describes the function of the visual hierarchy discussed in the passage?", choices:["It establishes that all figures in the painting are equally important.","It guides the viewer’s attention and suggests a narrative focus on the central figure.","It proves that the painter intended the shadowed figures to be ignored.","It indicates that the painting was created in low-light conditions."], answer:"B", explanation:"The passage says the composition draws the eye to the central figure first and then to the edges, establishing a protagonist/supporting relationship. (B) matches. (A) contradicts. (C) is too strong ('proves'/'ignored'). (D) is irrelevant."}
+    ];
+
+    const mathQuestions = [
+      { id:1, section:"math", topic:"Advanced Math", question:"The function f is defined by f(x) = ax^2 + bx + c, where a, b, and c are constants. The graph of y = f(x) in the xy-plane is a parabola that opens upward and has its vertex at (2, -5). If f(4) = 3, what is the value of f(0)?", choices:["3", "7", "11", "13"], answer:"A", explanation:"Using vertex form f(x) = a(x - h)^2 + k with vertex (2, -5): f(x) = a(x-2)^2 - 5. Substitute f(4) = 3: 3 = a(4-2)^2 - 5 → 3 = 4a - 5 → a = 2. Then f(0) = 2(0-2)^2 - 5 = 2(4) - 5 = 3."},
+      { id:2, section:"math", topic:"Algebra", question:"In the xy-plane, the line y = mx + b is perpendicular to the line 4x + 3y = 12 and passes through the point (8, -4). What is the value of b?", choices:["-10", "-6", "2", "10"], answer:"A", explanation:"Line 4x + 3y = 12 → 3y = -4x + 12 → y = (-4/3)x + 4. Slope = -4/3. Perpendicular slope m = 3/4. Through (8, -4): -4 = (3/4)(8) + b → -4 = 6 + b → b = -10."},
+      { id:3, section:"math", topic:"Advanced Math", question:"The equation 2x^2 - 12x + k = 0 has exactly one real solution. What is the value of k?", choices:["6", "12", "18", "36"], answer:"C", explanation:"For exactly one real solution, the discriminant must be zero: b^2 - 4ac = 0. Here a=2, b=-12, c=k. (-12)^2 - 4(2)(k) = 0 → 144 - 8k = 0 → 8k = 144 → k = 18."},
+      { id:4, section:"math", topic:"Problem-Solving & Data Analysis", question:"A right circular cylinder has a volume of 96π cubic centimeters and a height of 6 centimeters. What is the radius of the base, in centimeters?", choices:["2", "4", "6", "8"], answer:"B", explanation:"V = πr^2h → 96π = π · r^2 · 6 → 96 = 6r^2 → r^2 = 16 → r = 4."},
+      { id:5, section:"math", topic:"Trigonometry", question:"In right triangle ABC, angle C is the right angle, sin(A) = 5/13, and side BC = 10. What is the length of side AB (the hypotenuse)?", choices:["12", "13", "24", "26"], answer:"D", explanation:"sin(A) = opposite/hypotenuse = BC/AB = 5/13. Given BC = 10, we have 10/AB = 5/13 → AB = 10 · 13/5 = 26."},
+      { id:6, section:"math", topic:"Advanced Math", question:"If (x - 3) is a factor of the polynomial P(x) = x^3 - 7x^2 + 9x + 9, what is the value of P(0)?", choices:["3", "6", "9", "12"], answer:"C", explanation:"P(0) = 0^3 - 7(0)^2 + 9(0) + 9 = 9."},
+      { id:7, section:"math", topic:"Algebra", question:"The system of equations y = x^2 - 6x + 8 and y = -x + 4 has how many solutions in the xy-plane?", choices:["0", "1", "2", "3"], answer:"C", explanation:"Set equal: x^2 - 6x + 8 = -x + 4 → x^2 - 5x + 4 = 0 → (x-1)(x-4) = 0. Two solutions: x=1 (y=3) and x=4 (y=0). So 2 solutions."},
+      { id:8, section:"math", topic:"Advanced Math", question:"The parabola y = x^2 - 10x + 21 intersects the x-axis at two points. What is the distance between these two points?", choices:null, answer:"4", explanation:"Set y = 0: x^2 - 10x + 21 = 0 → (x-3)(x-7) = 0. Roots are x=3 and x=7. Distance = |7-3| = 4.", gridIn:true}
+      { id:9, section:"math", topic:"Algebra", question:"If (3^x)(9^(2x)) = 27^5, what is the value of x?", choices:null, answer:"3", explanation:"Rewrite with base 3: 3^x · (3^2)^(2x) = (3^3)^5 → 3^x · 3^(4x) = 3^15 → 3^(5x) = 3^15 → 5x = 15 → x = 3.", gridIn:true},
+      { id:10, section:"math", topic:"Geometry", question:"A circle in the xy-plane has center (3, -4) and radius 5. Which of the following points lies on the circle?", choices:["(3, 1)", "(8, -4)", "(3, -9)", "All of the above"], answer:"D", explanation:"Equation: (x-3)^2 + (y+4)^2 = 25. (3,1): 0 + 25 = 25 ✓. (8,-4): 25 + 0 = 25 ✓. (3,-9): 0 + 25 = 25 ✓. All three lie on the circle."},
+      { id:11, section:"math", topic:"Advanced Math", question:"The function g(x) = (x^2 - 9)/(x - 3) is undefined at x = 3. For all other values of x, g(x) is equivalent to which of the following?", choices:["x - 3", "x + 3", "x^2 - 3", "undefined"], answer:"B", explanation:"x^2 - 9 = (x-3)(x+3). So g(x) = (x-3)(x+3)/(x-3) = x + 3 for x ≠ 3."},
+      { id:12, section:"math", topic:"Problem-Solving & Data Analysis", question:"The mean of 5 numbers is 20. When a 6th number is added, the mean becomes 22. What is the 6th number?", choices:["22", "28", "32", "40"], answer:"C", explanation:"Sum of 5 numbers = 5 × 20 = 100. Sum of 6 numbers = 6 × 22 = 132. The 6th number = 132 - 100 = 32."},
+      { id:13, section:"math", topic:"Geometry & Trigonometry", question:"In the xy-plane, a line passes through the points (1, 7) and (5, -1). What is the y-coordinate of the point on this line whose x-coordinate is 9?", choices:null, answer:"-9", explanation:"Slope = (-1 - 7)/(5 - 1) = -8/4 = -2. Using point-slope from (5, -1): y - (-1) = -2(x - 5) → y = -2x + 10 - 1 → y = -2x + 9. At x=9: y = -18 + 9 = -9.", gridIn:true},
+      { id:14, section:"math", topic:"Algebra", question:"Which of the following is equivalent to (4a^3b^(-2))^(-1/2) for all positive values of a and b?", choices:["b/(2a^(3/2))", "2b/(a^(3/2))", "a^(3/2)/b", "b/(4a^(3/2))"], answer:"A", explanation:"(4a^3b^(-2))^(-1/2) = 4^(-1/2) · a^(-3/2) · b^(-2·(-1/2)) = (1/2) · a^(-3/2) · b = b/(2a^(3/2))."},
+      { id:15, section:"math", topic:"Advanced Math", question:"The equation (x^2 - 4x + 3)^2 - 5(x^2 - 4x + 3) + 6 = 0 can be solved by substitution. How many distinct real solutions does it have?", choices:["2", "3", "4", "5"], answer:"C", explanation:"Let u = x^2 - 4x + 3. Then u^2 - 5u + 6 = 0 → (u-2)(u-3) = 0 → u = 2 or u = 3.\nCase 1: x^2 - 4x + 3 = 2 → x^2 - 4x + 1 = 0 → discriminant = 16 - 4 = 12 > 0 → 2 real solutions.\nCase 2: x^2 - 4x + 3 = 3 → x^2 - 4x = 0 → x(x-4) = 0 → 2 real solutions (x=0, x=4).\nTotal: 4 distinct real solutions."}
+      { id:16, section:"math", topic:"Trigonometry", question:"If sin(θ) = 3/5 and cos(θ) > 0, what is the value of tan(θ)?", choices:null, answer:"3/4", explanation:"sin(θ) = 3/5, cos(θ) > 0 means θ is in Quadrant I. cos(θ) = √(1 - (3/5)^2) = √(16/25) = 4/5. tan(θ) = sin/cos = (3/5)/(4/5) = 3/4 = 0.75.", gridIn:true},
+      { id:17, section:"math", topic:"Problem-Solving & Data Analysis", question:"A population of bacteria doubles every 3 hours. If the initial population is 500, what will the population be after 12 hours?", choices:["1000", "2000", "4000", "8000"], answer:"D", explanation:"12 hours / 3 hours = 4 doubling periods. Population = 500 · 2^4 = 500 · 16 = 8000."},
+      { id:18, section:"math", topic:"Geometry", question:"A regular hexagon has side length 6. What is its area?", choices:["18√3", "36√3", "54√3", "72√3"], answer:"C", explanation:"A regular hexagon = 6 equilateral triangles. Area of one equilateral triangle with side s: (√3/4)s^2 = (√3/4)(36) = 9√3. Total = 6 · 9√3 = 54√3."},
+      { id:19, section:"math", topic:"Algebra", question:"For what value of k does the system y = 2x + k and y = x^2 - 4x + 5 have exactly one solution?", choices:null, answer:"-4", explanation:"Set equal: 2x + k = x^2 - 4x + 5 → x^2 - 6x + (5 - k) = 0. For exactly one solution, discriminant = 0: (-6)^2 - 4(1)(5-k) = 0 → 36 - 20 + 4k = 0 → 16 + 4k = 0 → k = -4.", gridIn:true},
+      { id:20, section:"math", topic:"Advanced Math", question:"If log_2(x) + log_2(x - 2) = 3, what is the value of x?", choices:["2", "3", "4", "6"], answer:"C", explanation:"log_2(x(x-2)) = 3 → x(x-2) = 2^3 = 8 → x^2 - 2x - 8 = 0 → (x-4)(x+2) = 0. x = 4 or x = -2. Since log_2(x) requires x > 0, x = 4."},
+      { id:21, section:"math", topic:"Geometry & Trigonometry", question:"In triangle ABC, AB = 13, BC = 14, and AC = 15. What is the area of triangle ABC?", choices:["84", "90", "96", "108"], answer:"A", explanation:"Heron's formula: s = (13+14+15)/2 = 21. Area = √(21·(21-13)·(21-14)·(21-15)) = √(21·8·7·6) = √7056 = 84."},
+      { id:22, section:"math", topic:"Advanced Math", question:"What is the remainder when x^3 + 4x^2 - 7x + 10 is divided by (x + 3)?", choices:null, answer:"40", explanation:"Remainder Theorem: evaluate at x = -3. (-3)^3 + 4(-3)^2 - 7(-3) + 10 = -27 + 36 + 21 + 10 = 40.", gridIn:true}
+    ];
+
+    /* ============================================================
+       EXAM STATE
+       ============================================================ */
+    let currentSectionIndex = 0;
+    let currentQuestionIndex = 0;
+    let answers = {};
+    let revealed = {};
+    let timerInterval;
+    let sectionTimes = [
+      { label: "Reading & Writing", seconds: 32 * 60, questions: rwQuestions },
+      { label: "Math", seconds: 35 * 60, questions: mathQuestions }
+    ];
+
+    function startExam() {
+      document.getElementById('start-screen').classList.remove('active');
+      document.getElementById('exam-container').classList.add('active');
+      currentSectionIndex = 0;
+      currentQuestionIndex = 0;
+      answers = {};
+      revealed = {};
+      renderSection();
+      startTimer();
+    }
+
+    function startTimer() {
+      const display = document.getElementById('timer-display');
+      const label = document.getElementById('timer-label');
+      const section = sectionTimes[currentSectionIndex];
+      let timeLeft = section.seconds;
+      timerInterval = setInterval(() => {
+        timeLeft--;
+        if (timeLeft < 0) timeLeft = 0;
+        const m = Math.floor(timeLeft / 60);
+        const s = timeLeft % 60;
+        display.textContent = `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
+        if (timeLeft < 300) {
+          display.classList.add('timer-warning');
+          label.textContent = "Time Remaining (almost up!)";
+        }
+        if (timeLeft === 0) {
+          clearInterval(timerInterval);
+          nextSectionOrFinish();
+        }
+      }, 1000);
+    }
+
+    function renderSection() {
+      const section = sectionTimes[currentSectionIndex];
+      const qList = section.questions;
+      const q = qList[currentQuestionIndex];
+      document.getElementById('section-label').textContent = currentSectionIndex + 1;
+      document.getElementById('q-counter').textContent = currentQuestionIndex + 1;
+      document.getElementById('q-total').textContent = qList.length;
+      document.getElementById('section-title').textContent = section.label;
+      document.getElementById('section-sub').textContent = currentSectionIndex === 0 ? "Hardest-Level Module (15 questions)" : "Hardest-Level Module (22 questions, calculator allowed)";
+      document.getElementById('btn-prev').disabled = currentQuestionIndex === 0;
+      document.getElementById('btn-next').style.display = currentQuestionIndex === qList.length - 1 ? 'none' : 'inline-block';
+      document.getElementById('btn-finish').style.display = currentQuestionIndex === qList.length - 1 ? 'inline-block' : 'none';
+      const progress = document.getElementById('progress-dots');
+      progress.innerHTML = '';
+      qList.forEach((_, i) => {
+        const dot = document.createElement('div');
+        dot.className = 'progress-dot';
+        if (answers[qList[i].id] !== undefined) dot.classList.add('answered');
+        if (i === currentQuestionIndex) dot.classList.add('current');
+        if (revealed[qList[i].id]) dot.classList.add('revealed');
+        dot.onclick = () => { currentQuestionIndex = i; renderQuestion(); };
+        progress.appendChild(dot);
+      });
+      renderQuestion();
+    }
+
+    function renderQuestion() {
+      const section = sectionTimes[currentSectionIndex];
+      const qList = section.questions;
+      const q = qList[currentQuestionIndex];
+      const area = document.getElementById('question-area');
+      const userAnswer = answers[q.id];
+      let choicesHtml = '';
+      if (q.choices) {
+        choicesHtml = '<div class="choices">';
+        q.choices.forEach((choice, idx) => {
+          const letter = String.fromCharCode(65 + idx);
+          const checked = userAnswer === letter ? 'checked' : '';
+          choicesHtml += `<label class="choice-btn ${userAnswer === letter ? 'selected' : ''}"><span class="choice-letter">${letter}</span><input type="radio" name="q${q.id}" value="${letter}" ${checked} onchange="selectAnswer(${q.id}, '${letter}')" />${choice}</label>`;
+        });
+        choicesHtml += '</div>';
+      } else {
+        choicesHtml = `<div class="math-input-row"><input type="text" class="ans-input" id="grid-input-${q.id}" value="${userAnswer || ''}" placeholder="Enter answer" onchange="selectAnswer(${q.id}, this.value)"><button class="btn-check" onclick="saveGridAnswer(${q.id})">Save</button></div>`;
+      }
+      const feedback = userAnswer !== undefined ? `<div class="feedback ${isCorrect(q) ? 'correct' : 'incorrect'}">${isCorrect(q) ? 'Correct!' : `Incorrect. Correct answer: ${formatAnswer(q)}`}</div>` : '';
+      const explanation = revealed[q.id] ? `<div class="explanation visible"><strong>Explanation:</strong><p>${q.explanation}</p></div>` : `<button class="btn-check" onclick="toggleExplanation(${q.id})" style="background:var(--accent);color:#fff;">Show Explanation</button>`;
+      area.innerHTML = `<div class="q-card"><div class="q-header"><div class="q-meta"><span class="q-num">#${currentQuestionIndex + 1}</span><span class="q-badge">${q.section.toUpperCase()}</span><span class="q-topic">${q.topic || 'General'}</span></div></div>${q.passage ? `<div class="passage">${q.passage.map(p => `<p>${p}</p>`).join('')}</div>` : ''}<div class="q-body">${q.question}</div>${choicesHtml}${feedback}${explanation}</div>`;
+    }
+
+    function selectAnswer(qId, val) {
+      answers[qId] = val;
+      renderQuestion();
+      renderSection();
+    }
+
+    function saveGridAnswer(qId) {
+      const input = document.getElementById(`grid-input-${qId}`);
+      answers[qId] = input.value.trim();
+      renderQuestion();
+      renderSection();
+    }
+
+    function toggleExplanation(qId) {
+      revealed[qId] = !revealed[qId];
+      renderQuestion();
+    }
+
+    function prevQuestion() {
+      if (currentQuestionIndex > 0) {
+        currentQuestionIndex--;
+        renderSection();
+      }
+    }
+
+    function nextQuestion() {
+      const section = sectionTimes[currentSectionIndex];
+      if (currentQuestionIndex < section.questions.length - 1) {
+        currentQuestionIndex++;
+        renderSection();
+      }
+    }
+
+    function nextSectionOrFinish() {
+      if (currentSectionIndex === 0) {
+        currentSectionIndex = 1;
+        currentQuestionIndex = 0;
+        clearInterval(timerInterval);
+        startTimer();
+        renderSection();
+      } else {
+        finishExam();
+      }
+    }
+
+    function finishExam() {
+      clearInterval(timerInterval);
+      document.getElementById('exam-container').classList.remove('active');
+      document.getElementById('results-screen').classList.add('active');
+      computeResults();
+    }
+
+    function isCorrect(q) {
+      const user = answers[q.id];
+      if (user === undefined || user === null || user === '') return false;
+      return String(user).trim().toLowerCase() === String(q.answer).trim().toLowerCase();
+    }
+
+    function formatAnswer(q) {
+      if (q.choices) {
+        const idx = q.choices.findIndex(c => String(c).toLowerCase() === String(q.answer).toLowerCase());
+        if (idx >= 0) return String.fromCharCode(65 + idx) + '. ' + q.answer;
+        return q.answer;
+      }
+      return q.answer;
+    }
+
+    function computeResults() {
+      const rwCorrect = rwQuestions.filter(q => isCorrect(q)).length;
+      const mathCorrect = mathQuestions.filter(q => isCorrect(q)).length;
+      const rwTotal = rwQuestions.length;
+      const mathTotal = mathQuestions.length;
+      const rwScaled = Math.round(200 + (rwCorrect / rwTotal) * 600);
+      const mathScaled = Math.round(200 + (mathCorrect / mathTotal) * 600);
+      const total = rwScaled + mathScaled;
+      let pct;
+      if (total >= 1400) pct = "95+";
+      else if (total >= 1200) pct = "75-90";
+      else if (total >= 1000) pct = "50-70";
+      else if (total >= 800) pct = "25-45";
+      else pct = "1-20";
+      document.getElementById('score-total').textContent = total;
+      document.getElementById('score-rw').textContent = rwScaled;
+      document.getElementById('score-math').textContent = mathScaled;
+      document.getElementById('score-pct').textContent = pct;
+      document.getElementById('br-rw-correct').textContent = rwCorrect;
+      document.getElementById('br-rw-total').textContent = rwTotal;
+      document.getElementById('br-math-correct').textContent = mathCorrect;
+      document.getElementById('br-math-total').textContent = mathTotal;
+    }
+
+    function showResults() {
+      document.getElementById('answer-key-screen').classList.remove('active');
+      document.getElementById('results-screen').classList.add('active');
+    }
+
+    function showAnswerKey() {
+      document.getElementById('results-screen').classList.remove('active');
+      document.getElementById('answer-key-screen').classList.add('active');
+      renderAnswerKey();
+    }
+
+    function renderAnswerKey() {
+      const rwGrid = document.getElementById('key-rw');
+      const mathGrid = document.getElementById('key-math');
+      rwGrid.innerHTML = '';
+      mathGrid.innerHTML = '';
+      rwQuestions.forEach(q => {
+        const user = answers[q.id] || '—';
+        const correct = isCorrect(q);
+        const item = document.createElement('div');
+        item.className = 'key-item';
+        item.innerHTML = `<span class="qid">Q${q.id}</span><span class="ans" style="float:none; display:block; margin-top:4px;">Your answer: <strong>${user}</strong> ${correct ? '✓' : '✗'}</span><span class="ans" style="display:block; margin-top:2px; font-size:0.8rem; color:var(--text-muted);">Correct: <strong>${formatAnswer(q)}</strong></span>`;
+        rwGrid.appendChild(item);
+      });
+      mathQuestions.forEach(q => {
+        const user = answers[q.id] || '—';
+        const correct = isCorrect(q);
+        const item = document.createElement('div');
+        item.className = 'key-item';
+        item.innerHTML = `<span class="qid">Q${q.id}</span><span class="ans" style="float:none; display:block; margin-top:4px;">Your answer: <strong>${user}</strong> ${correct ? '✓' : '✗'}</span><span class="ans" style="display:block; margin-top:2px; font-size:0.8rem; color:var(--text-muted);">Correct: <strong>${formatAnswer(q)}</strong></span>`;
+        mathGrid.appendChild(item);
+      });
+    }
+  </script>
+</body>
+</html>
